@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biedronka</title>
+    <link rel="icon" href="images/smile.svg" type="image/svg+xml">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+        
+        html, body {
+            height: 100%;
+            overflow: hidden;
+        }
+        body {
+            background: linear-gradient(45deg, #fb00ff, #2a5298);
+            transition: background 1s ease;
+        }
+
+        .container {
+            height: 100vh;
+            overflow-y: scroll;
+            scroll-snap-type: y mandatory;
+        }
+
+        .slide {
+            height: 100vh;
+            font-size: 3rem;
+            font-weight: bold;
+            color: white;
+            scroll-snap-align: start;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            width: 100%;
+        }
+        
+        div {
+            position: static;
+        }
+        h1 {
+            font-size: calc(30px + 4vw);
+            max-width: 100vw;
+            margin-bottom: 50px;
+        }
+        p {
+            font-size: calc(20px + 2vw);
+            max-width: 1400px;
+        }
+        .icon-grid {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 50px;
+        }
+
+        .icon img {
+            width: 50px;
+            height: 50px;
+        }
+
+        p{
+            margin-bottom: 30px;
+        }
+
+        
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="slide">
+            <h1>Hi ^^ I'm Adam</h1>
+            <p>You may know me as Rafau, Biedronka, A or E. Don't worry though - it's still me.</p>
+        </div>
+        <div class="slide">
+            <h1>About me</h1>
+            <p>I'm 
+                <span id="article"></span>
+                <span id="age"></span>
+                <script>
+                    const birthDate = new Date(2006, 10, 1);
+                    const today = new Date();
+                    let age = today.getFullYear() - birthDate.getFullYear();
+                    const monthDiff = today.getMonth() - birthDate.getMonth();
+                    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+                        age--;
+                    }
+                    document.getElementById("age").textContent = age;
+                    
+                    const article = (age === 18) ? "an" : "a";
+                    document.getElementById("article").textContent = article;
+                </script>
+                yo student from Poland doing programming and stuff</p>
+            <p>Currently, I am finishing the last year of my secondary school, and I'm looking forward toward the higher education</p>
+        </div>
+        <div class="slide">
+            <h1>My hobbies</h1>
+            <p>I like computer hardware, playing video games and maintaining server software</p>
+            
+            <p>This website is hosted on a cloud linux machine entirely configured by me :)</p>
+        </div>
+        <div class="slide">
+            <h1>Contact</h1>
+            <p>If you wish to contact me, or just want to check out some of my projects, feel free to use any of the methods listed below:</p>
+            <div class="icon-grid">
+                <a href="https://github.com/RealFFF000" class="icon">
+                    <img src="images/GitHub_Invertocat_Dark.svg" alt="Github icon">
+                </a>
+                <a href="mailto:biedronkabusiness@duck.com" class="icon">
+                    <img src="images/mail.svg" alt="Email icon">
+                </a>
+                <a href="https://signal.me/#eu/vzpjnqG97WiIQKyHFn3Ge4LyI0PowaeAE7SQ-gh6yCRqf_omkTBL67bTddOaLNDq" class="icon">
+                    <img src="images/Signal-Logo-Black.svg" alt="Signal icon">
+                </a>
+                <a href="#" onclick="alert('my discord username is: meowmeow4765');" class="icon" id="discord">
+                    <img src="images/discord-mark-black.svg" alt="Discord icon">
+                </a>
+                <a href="https://biedroneczka.itch.io/" class="icon">
+                    <img src="images/itchio-logo-textless-black.svg" alt="itch.io icon">
+                </a>
+                
+            </div>
+
+
+        </div>
+    </div>
+
+    <script>
+        const container = document.querySelector(".container");
+        const gradients = [
+            { color1: "#fb00ff", color2: "#2a5298", angle: 45 },   // Slajd 1
+            { color1: "#ff9900", color2: "#9900ff", angle: 90 },   // Slajd 2
+            { color1: "#ff7474", color2: "#642CA9", angle: 135 },  // Slajd 3
+            { color1: "#ff1493", color2: "#00ffff", angle: 230 }   // Slajd 4
+        ];
+
+        container.addEventListener("scroll", () => {
+            let scrollTop = container.scrollTop;
+            let maxScroll = container.scrollHeight - window.innerHeight;
+            let progress = scrollTop / maxScroll;
+            
+            let slideIndex = Math.floor(progress * (gradients.length - 1));
+            let nextIndex = Math.min(slideIndex + 1, gradients.length - 1);
+            let localProgress = (progress * (gradients.length - 1)) % 1;
+
+            let start = gradients[slideIndex];
+            let end = gradients[nextIndex];
+
+            let color1 = interpolateColor(start.color1, end.color1, localProgress);
+            let color2 = interpolateColor(start.color2, end.color2, localProgress);
+            let angle = start.angle + (end.angle - start.angle) * localProgress;
+
+            document.body.style.background = `linear-gradient(${angle}deg, ${color1}, ${color2})`;
+        });
+
+        function interpolateColor(hex1, hex2, factor) {
+            let c1 = hexToRgb(hex1);
+            let c2 = hexToRgb(hex2);
+
+            let r = Math.round(c1.r + (c2.r - c1.r) * factor);
+            let g = Math.round(c1.g + (c2.g - c1.g) * factor);
+            let b = Math.round(c1.b + (c2.b - c1.b) * factor);
+
+            return `rgb(${r}, ${g}, ${b})`;
+        }
+
+        function hexToRgb(hex) {
+            let shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+            hex = hex.replace(shorthandRegex, (m, r, g, b) => r + r + g + g + b + b);
+
+            let result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return result ? {
+                r: parseInt(result[1], 16),
+                g: parseInt(result[2], 16),
+                b: parseInt(result[3], 16)
+            } : null;
+        }
+    </script>
+
+</body>
+</html>
