@@ -71,7 +71,7 @@
         }
         #image {
             max-width: 600px;
-            width: 100vw;
+            width: 60vw;
             margin: 50px;
         }
         .comment {
@@ -79,10 +79,11 @@
         }
         #flex {
                 flex-direction: row;
-            }
+        }
         @media only screen and (max-width: 600px) {
-            #flex {
-                flex-direction: column;
+            #image {
+                visibility: hidden;
+                position: fixed;
             }
         }
     </style>
