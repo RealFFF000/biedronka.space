@@ -69,8 +69,22 @@
         p{
             margin-bottom: 30px;
         }
-
-        
+        #image {
+            max-width: 600px;
+            width: 100vw;
+            margin: 50px;
+        }
+        .comment {
+            font-size: calc(20px + 1.5vw);
+        }
+        #flex {
+                flex-direction: row;
+            }
+        @media only screen and (max-width: 600px) {
+            #flex {
+                flex-direction: column;
+            }
+        }
     </style>
 </head>
 <body>
@@ -80,26 +94,32 @@
             <h1>Hi ^^ I'm Adam</h1>
             <p>You may know me as Rafau, Biedronka, A or E. Don't worry though - it's still me.</p>
         </div>
-        <div class="slide">
-            <h1>About me</h1>
-            <p>I'm 
-                <span id="article"></span>
-                <span id="age"></span>
-                <script>
-                    const birthDate = new Date(2006, 10, 1);
-                    const today = new Date();
-                    let age = today.getFullYear() - birthDate.getFullYear();
-                    const monthDiff = today.getMonth() - birthDate.getMonth();
-                    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
-                        age--;
-                    }
-                    document.getElementById("age").textContent = age;
-                    
-                    const article = (age === 18) ? "an" : "a";
-                    document.getElementById("article").textContent = article;
-                </script>
-                yo student from Poland doing programming and stuff</p>
-            <p>Currently, I am finishing the last year of my secondary school, and I'm looking forward toward the higher education</p>
+        <div class="slide" id="flex">
+            <div>
+                <h1>About me</h1>
+                <p>I'm 
+                    <span id="article"></span>
+                    <span id="age"></span>
+                    <script>
+                        const birthDate = new Date(2006, 10, 1);
+                        const today = new Date();
+                        let age = today.getFullYear() - birthDate.getFullYear();
+                        const monthDiff = today.getMonth() - birthDate.getMonth();
+                        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+                            age--;
+                        }
+                        document.getElementById("age").textContent = age;
+                        
+                        const article = (age === 18) ? "an" : "a";
+                        document.getElementById("article").textContent = article;
+                    </script>
+                    yo student from Poland doing programming and stuff</p>
+                <p>Currently, I am finishing the last year of my secondary school, and I'm looking forward toward the higher education</p>
+            </div>
+            <div id="image">
+                <img style="width: 100%;" src="images/kot.jpg" alt="Cat">
+                <p class="comment">He's not my cat, but he's still cute :3</p>
+            </div>
         </div>
         <div class="slide">
             <h1>My hobbies</h1>
