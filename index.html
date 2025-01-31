@@ -75,16 +75,19 @@
             margin: 50px;
         }
         .comment {
-            font-size: calc(20px + 1.5vw);
+            font-size: calc(10px + 1vw);
         }
         #flex {
-                flex-direction: row;
+            flex-direction: row;
         }
         @media only screen and (max-width: 600px) {
             #image {
                 visibility: hidden;
                 position: fixed;
             }
+        }
+        a:visited {
+            color: blue !important;
         }
     </style>
 </head>
@@ -119,14 +122,21 @@
             </div>
             <div id="image">
                 <img style="width: 100%;" src="images/kot.jpg" alt="Cat">
-                <p class="comment">He's not my cat, but he's still cute :3</p>
+                <p class="comment">Sylwek is not my cat, but he's still cute :3</p>
             </div>
         </div>
         <div class="slide">
-            <h1>My hobbies</h1>
-            <p>I like computer hardware, playing video games and maintaining server software</p>
-            
-            <p>This website is hosted on a cloud linux machine entirely configured by me :)</p>
+            <div class="slide" id="flex">
+                <div id="image">
+                    <img  src="images/rank.png" alt="rank" style="height: 600px; width: auto;">
+                    <p class="comment">I'm Diamond in StarCraft 2 <br>(Protoss <a href="#" onclick="alert('yes I mostly got there by cheese')">btw</a>)</p>
+                </div>
+                <div>
+                    <h1>My hobbies</h1>
+                    <p>I like computer hardware, playing video games and maintaining server software</p>
+                    <p>This website is hosted on a cloud linux machine entirely configured by me :)</p>
+                </div>
+            </div>
         </div>
         <div class="slide">
             <h1>Contact</h1>
@@ -159,8 +169,8 @@
         const gradients = [
             { color1: "#fb00ff", color2: "#2a5298", angle: 45 },   // Slajd 1
             { color1: "#ff9900", color2: "#9900ff", angle: 90 },   // Slajd 2
-            { color1: "#ff7474", color2: "#642CA9", angle: 135 },  // Slajd 3
-            { color1: "#ff1493", color2: "#00ffff", angle: 230 }   // Slajd 4
+            { color1: "#ed5c86", color2: "#2278FB", angle: 235 },  // Slajd 3
+            { color1: "#ff1493", color2: "#00ffff", angle: 405 }   // Slajd 4
         ];
 
         container.addEventListener("scroll", () => {
