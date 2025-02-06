@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Duck</title>
+    <style>
+        body { font-family: monospace; background: black; color: white; text-align: center; }
+        #ascii-output { white-space: pre; font-size: 1.4vh; line-height: 1vh; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); }
+    </style>
+</head>
+<body>
+    <pre id="ascii-output"></pre>
+
+    <script>
+        let vertices = [];
+        let faces = [];
+        let angleX = 0, angleY = Math.PI / 2, angleZ = Math.PI;
+        let ambientLight = 0.3;  // Adjust this for more/less ambient light
+
+        fetch("models/duck.obj")
+            .then(response => response.text())
+            .then(parseOBJ)
+            .then(startRendering);
+
+        function parseOBJ(objText) {
+            vertices = [];
+            faces = [];
+            const lines = objText.split("\n");
+            for (let line of lines) {
+                let parts = line.trim().split(/\s+/);
+                if (parts[0] === "v") {
+                    vertices.push({
+                        x: parseFloat(parts[1]),
+                        y: parseFloat(parts[2]),
+                        z: parseFloat(parts[3])
+                    });
+                } else if (parts[0] === "f") {
+                    faces.push(parts.slice(1).map(idx => parseInt(idx) - 1));
+                }
+            }
+        }
+
+        function rotatePoint(v, ax, ay, az) {
+            let x = v.x, y = v.y, z = v.z;
+            let cosX = Math.cos(ax), sinX = Math.sin(ax);
+            let cosY = Math.cos(ay), sinY = Math.sin(ay);
+            let cosZ = Math.cos(az), sinZ = Math.sin(az);
+
+            // Rotate around X-axis
+            let y1 = y * cosX - z * sinX;
+            let z1 = y * sinX + z * cosX;
+            y = y1; z = z1;
+
+            // Rotate around Y-axis
+            let x2 = x * cosY + z * sinY;
+            let z2 = -x * sinY + z * cosY;
+            x = x2; z = z2;
+
+            // Rotate around Z-axis
+            let x3 = x * cosZ - y * sinZ;
+            let y3 = x * sinZ + y * cosZ;
+            x = x3; y = y3;
+
+            return { x, y, z };
+        }
+
+        function computeNormal(v1, v2, v3) {
+            let u = { x: v2.x - v1.x, y: v2.y - v1.y, z: v2.z - v1.z };
+            let v = { x: v3.x - v1.x, y: v3.y - v1.y, z: v3.z - v1.z };
+
+            return {
+                x: u.y * v.z - u.z * v.y,
+                y: u.z * v.x - u.x * v.z,
+                z: u.x * v.y - u.y * v.x
+            };
+        }
+
+        function normalize(v) {
+            let len = Math.sqrt(v.x * v.x + v.y * v.y + v.z * v.z);
+            return { x: v.x / len, y: v.y / len, z: v.z / len };
+        }
+
+        function dotProduct(a, b) {
+            return a.x * b.x + a.y * b.y + a.z * b.z;
+        }
+
+        function renderASCII() {
+            const width = 300, height = 180;
+            const asciiChars = [' ', '.', ':', '-', '=', '+', '*', '#', '%', '@'];
+            const screen = Array.from({ length: height }, () => Array(width).fill(' '));
+            const depthBuffer = Array.from({ length: height }, () => Array(width).fill(-Infinity));
+
+            const scale = 250;
+            let rotatedVertices = vertices.map(v => rotatePoint(v, angleX, angleY, angleZ));
+
+            for (const face of faces) {
+                let v1 = rotatedVertices[face[0]];
+                let v2 = rotatedVertices[face[1]];
+                let v3 = rotatedVertices[face[2]];
+
+                // Compute normal and check if face is visible (backface culling)
+                let normal = normalize(computeNormal(v1, v2, v3));
+                let viewVector = { x: 0, y: 0, z: 1 };
+                let brightness = Math.max(dotProduct(normal, viewVector), 0) + ambientLight;
+
+                if (brightness <= 0) continue; // Skip backfaces
+
+                // Compute ASCII shading based on brightness
+                brightness = Math.min(brightness, 1); // Clamp to [0,1]
+                let shadeIndex = Math.floor(brightness * (asciiChars.length - 1));
+                let shade = asciiChars[shadeIndex];
+
+                // Compute face center
+                let centerX = (v1.x + v2.x + v3.x) / 3;
+                let centerY = (v1.y + v2.y + v3.y) / 3;
+                let centerZ = (v1.z + v2.z + v3.z) / 3; // Average Z for depth sorting
+
+                let screenX = Math.floor((centerX * scale + width / 2) % width);
+                let screenY = Math.floor((centerY * scale + height / 2) % height)+6;
+
+                // **Depth Buffer Check**
+                if (
+                    screenY >= 0 && screenY < height &&
+                    screenX >= 0 && screenX < width &&
+                    centerZ > depthBuffer[screenY][screenX]
+                ) {
+                    depthBuffer[screenY][screenX] = centerZ; // Update depth
+                    screen[screenY][screenX] = shade; // Draw pixel
+                }
+            }
+
+            document.getElementById('ascii-output').textContent = screen.map(row => row.join("")).join("\n");
+        }
+
+        function startRendering() {
+            function update() {
+                angleY += 0.01;
+                renderASCII();
+                requestAnimationFrame(update);
+            }
+            update();
+        }
+    </script>
+
+</body>
+</html>
